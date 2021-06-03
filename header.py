@@ -10,4 +10,5 @@ Use this module to replace the request headers
 class Header(object):
     """Replace Request Headers"""
     def __init__(self, data: bytes):
-      pass
+        if not data or b'\r\n\r\n' not in data:
+            self._header = None
