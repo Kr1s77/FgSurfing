@@ -1,3 +1,8 @@
 FG Surfing == 4G Proxy
 ~~~~~~~~~~~~~~~~~~~~~~
 Languages: Python3
+
+Dependent modules:
+    Server:
+        Load balance: HaProxy-> https://github.com/haproxy/haproxy
+        Intranet through: Frp-> https://github.com/fatedier/frp
