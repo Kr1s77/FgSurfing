@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 """
-FgSurfing.api
+Slaver Process
 ~~~~~~~~~~~~
 Use this module to replace the request headers
 :copyright: (c) 2021 by Kris

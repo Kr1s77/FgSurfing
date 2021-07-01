@@ -48,7 +48,7 @@ def rm_and_mk_dir(remote_path: str,  device: Device) -> str:
     return remote_path
 
 
-def create(device: Device):
+def deploy_to_remote(device: Device):
     output_filename = os.path.basename(proxy_dir) + '.tar.gz'
     make_gz(output_filename, proxy_dir)
 

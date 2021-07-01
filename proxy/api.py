@@ -1,14 +1,12 @@
 # _*_ coding: utf-8 _*_
 """
-变换一种方式，在手机上独立运行
-启用一个端口，数据被客户端发送到这个端口，然后我拿着这个数据发送到目标端口
-这样就完成了一个 Socket 代理的形式。
+Master Process
 """
 import logging
 from adb import Device
-from deploy.cli import create
 from functools import partial
 from command import CmdExecute
+from deploy.cli import deploy_to_remote
 from __init__ import __author__, __version__, __site__
 
 log = logging.getLogger(__name__)
@@ -60,16 +58,19 @@ def init_all_devices():
         if 'device' in device_str:
             online_devices.append(device_str)
     devices = list(map(lambda x: x.split('\t')[0].strip(), online_devices))
-    log.info(f'[{len(devices)}] Devices Found')
+    log.info(f'Count: [{len(devices)}] Devices Found')
     return devices
 
 
-def runner(
-        debug: bool = True,
-        ip: str = '0.0.0.0',
-        port: int = 30000,
-        open_ssl: bool = True,
-) -> None:
+def _running_proxy(device: Device):
+    pass
+
+
+def _daemon_proxy(device: Device):
+    pass
+
+
+def runner(debug: bool = True, ip: str = '0.0.0.0', port: int = 30000, open_ssl: bool = True) -> None:
     """program entry
      1. deploy the application to the phone.
      2. get all device and init all device.
@@ -93,15 +94,19 @@ def runner(
             Device(device_id=device_id, port=port, ip=ip)
         )
 
-    # deploy file
+    # deploy file and running proxy and create proxy daemon
     for index, device in enumerate(devices):
         log.info(f'Deploy device: {device.device_id}  {len(devices)}/{index + 1}')
-        create(device=device)
+        deploy_to_remote(device=device)
+        _running_proxy(device=device)
+        _daemon_proxy(device=device)
 
     if open_ssl:
         log.info(f'FGProxy {__version__} remote running at {ip}:{port} openSSL: True')
     else:
         log.info(f'FGProxy {__version__} remote running at {ip}:{port} openSSL: False')
+
+
 
 
 if __name__ == '__main__':
