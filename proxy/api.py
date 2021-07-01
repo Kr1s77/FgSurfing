@@ -7,6 +7,7 @@
 import logging
 from functools import partial
 # from adb import Device, AdbTools
+from deploy.cli import create
 from __init__ import __author__, __version__, __site__
 
 log = logging.getLogger(__name__)
@@ -23,13 +24,33 @@ _set_debug = partial(configure_logging, logging.DEBUG)
 _set_info = partial(configure_logging, logging.INFO)
 
 
-def runner(debug: bool, ip: str, port: int, open_ssl: bool = True) -> None:
-    if debug:
+def _init_msg(debug: bool) -> None:
+    if debug:  # set debug level
         _set_debug()
     else:
         _set_info()
-
     log.info(f'author: {__author__} site: {__site__}')
+    return None
+
+
+def runner(
+        debug: bool = True,
+        ip: str = '0.0.0.0',
+        port: int = 30000,
+        open_ssl: bool = True,
+        compress: str = 'gz'
+) -> None:
+    """program entry
+     1. deploy the application to the phone.
+     2. running application and output log.
+     """
+    # init
+    _init_msg(debug=debug)
+
+    # deploy file
+    create(compress=compress)
+
+
     if open_ssl:
         log.info(f'FGProxy {__version__} running at {ip}:{port} openSSL: True')
     else:

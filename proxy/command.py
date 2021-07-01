@@ -18,6 +18,7 @@ ADB = {
     'PING_BAIDU':              'ping -c 1 baidu.com',
     'FORWARD_DEVICE_PORT':     'forward tcp:{port} tcp:8118',
     'ADB_DEVICES':             'adb devices',
+    'ADB_PUSH':                'adb push',
 }
 
 
@@ -30,23 +31,27 @@ Commands = {
     'PING_BAIDU':             Cmd('PING_BAIDU',              ADB['CHECK_AIRPLANE_MODE']),
     'FORWARD_DEVICE_PORT':    Cmd('FORWARD_DEVICE_PORT',     ADB['FORWARD_DEVICE_PORT']),
     'ADB_DEVICES':            Cmd('ADB_DEVICES',             ADB['ADB_DEVICES']),
+    'ADB_PUSH':               Cmd('ADB_PUSH',                ADB['ADB_PUSH']),
 }
 
 
 class Command(metaclass=ABCMeta):
     @abstractmethod
     def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
+        """generate command...
+        """
         pass
 
 
 class AdbCommand(Command):
-    def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
-        pass
+    def gen_cmd(self, name: Optional[str], device_id: Optional[str], *args) -> Optional[str]:
+        cmd = ''.join([ADB_PREFIX.format(device_id), Commands[name].command, *args])
+        return cmd
     
     
-class OsCommand(Command):
-    def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
-        pass
+# class OsCommand(Command):
+#     def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
+#         pass
 
 
 class CmdConnector():
