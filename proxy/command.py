@@ -2,7 +2,6 @@ import os
 from typing import Optional
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
-from adb import Device
 
 
 Cmd = namedtuple('Cmd', 'name           command')
@@ -18,7 +17,10 @@ ADB = {
     'PING_BAIDU':              'ping -c 1 baidu.com',
     'FORWARD_DEVICE_PORT':     'forward tcp:{port} tcp:8118',
     'ADB_DEVICES':             'devices',
-    'ADB_PUSH':                'push ',
+    'ADB_PUSH':                'push',
+    'GZ_DECOMPRESS':           'tar -zxf',
+    'RM_DIR':                  'rm -rf',
+    'MK_DIR':                  'mkdir',
 }
 
 
@@ -32,22 +34,31 @@ Commands = {
     'FORWARD_DEVICE_PORT':    Cmd('FORWARD_DEVICE_PORT',     ADB['FORWARD_DEVICE_PORT']),
     'ADB_DEVICES':            Cmd('ADB_DEVICES',             ADB['ADB_DEVICES']),
     'ADB_PUSH':               Cmd('ADB_PUSH',                ADB['ADB_PUSH']),
+    'GZ_DECOMPRESS':          Cmd('GZ_DECOMPRESS',           ADB['GZ_DECOMPRESS']),
+    'RM_DIR':                 Cmd('RM_DIR',                  ADB['RM_DIR']),
+    'MK_DIR':                 Cmd('MK_DIR',                  ADB['MK_DIR']),
 }
 
 
 class Command(metaclass=ABCMeta):
     without_shell_list = ['push', ]
 
+    def __init__(self, device_id: str = None):
+        self.device_id = device_id
+
     @abstractmethod
-    def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
+    def gen_cmd(self, name: Optional[str], *args) -> Optional[str]:
         """generate command...
         """
         pass
 
 
 class AdbCommand(Command):
+    def __init__(self, device_id: str = None):
+        super(AdbCommand, self).__init__(device_id=device_id)
+        self.device_id = device_id
 
-    def gen_cmd(self, name: Optional[str], device_id: Optional[str], *args) -> Optional[str]:
+    def gen_cmd(self, name: Optional[str], *args) -> Optional[str]:
         """ Types:
         # adb -s '...' push ././. ././.
         # adb -s '...' shell ...
@@ -55,28 +66,23 @@ class AdbCommand(Command):
         command = Commands[name].command  # gen command
 
         if command in self.without_shell_list:
-            cmd = ''.join([ADB_PREFIX.format(device_id), ' '.join([command, *args])])
+            cmd = ''.join([ADB_PREFIX.format(self.device_id), ' '.join([command, *args])])
         else:
-            cmd = ''.join([ADB_PREFIX.format(device_id), 'shell ', command, *args])
+            cmd = ''.join([ADB_PREFIX.format(self.device_id), 'shell ', ' '.join([command, *args])])
 
         return cmd
-    
-    
-class OsCommand(Command):
-    def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
-        pass
 
 
 class CmdExecute():
-    def __init__(self, command: Command, device: Device):
+    def __init__(self, command: Command):
         self.command = command
-        self.device = device
 
     def get_state(self):
         pass
 
-    def execute(self, name: Optional[str]) -> Optional[str]:
-        cmd = self.command.gen_cmd(name=name, device_id=self.device.device_id)
+    def execute(self, name: Optional[str], *args) -> Optional[str]:
+        cmd = self.command.gen_cmd(name, *args)
+        print(cmd)
         return self.execute_command(command=cmd)
 
     @staticmethod

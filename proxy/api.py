@@ -6,8 +6,8 @@
 """
 import logging
 from adb import Device
-from functools import partial
 from deploy.cli import create
+from functools import partial
 from command import CmdExecute
 from __init__ import __author__, __version__, __site__
 
@@ -48,7 +48,7 @@ def init_all_devices():
         if 'device' in device_str:
             online_devices.append(device_str)
     devices = list(map(lambda x: x.split('\t')[0].strip(), online_devices))
-    log.info(f'Get -{len(devices)}- Devices.')
+    log.info(f'[{len(devices)}] Devices Found')
     return devices
 
 
@@ -57,7 +57,6 @@ def runner(
         ip: str = '0.0.0.0',
         port: int = 30000,
         open_ssl: bool = True,
-        compress: str = 'gz'
 ) -> None:
     """program entry
      1. deploy the application to the phone.
@@ -84,13 +83,17 @@ def runner(
 
     # deploy file
     for index, device in enumerate(devices):
-        log.info(f'Deploy phone name {device.device_id}  {len(devices)}/{index + 1}')
-        create(compress=compress, device=device)
+        log.info(f'Deploy device: {device.device_id}  {len(devices)}/{index + 1}')
+        create(device=device)
 
     if open_ssl:
-        log.info(f'FGProxy {__version__} running at {ip}:{port} openSSL: True')
+        log.info(f'FGProxy {__version__} remote running at {ip}:{port} openSSL: True')
     else:
-        log.info(f'FGProxy {__version__} running at {ip}:{port} openSSL: False')
+        log.info(f'FGProxy {__version__} remote running at {ip}:{port} openSSL: False')
+
+
+if __name__ == '__main__':
+    runner(True, '0.0.0.0', 12345)
 
     # adb = AdbTools()
     # devices = [Device(device, adb=adb) for device in adb.get_remote_devices()]
@@ -107,8 +110,3 @@ def runner(
     # sys.stdout.flush()
     # count += 1
     # time.sleep(0.5)
-    pass
-
-
-if __name__ == '__main__':
-    runner(True, '0.0.0.0', 12345)

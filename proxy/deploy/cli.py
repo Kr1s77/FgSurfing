@@ -1,13 +1,8 @@
 import os
-import logging
 import tarfile
 import zipfile
 import argparse
 from adb import Device
-from api import configure_logging
-
-log = logging.getLogger(__name__)
-configure_logging(logging.INFO)
 
 # Default dir path
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,30 +25,54 @@ def make_zip(output_filename: str, source_dir):
     zip_file.close()
 
 
-def push_to_mobile(filepath: str) -> str:
-    return 'data/local/tmp/'
+def push_to_mobile(filepath: str, remote_path: str, device: Device) -> str:
+    device.adb.push(
+        filepath=filepath,
+        remote_path=remote_path
+    )
+    return remote_path
 
 
-def decompress_mobile_file(filepath: str) -> str:
-    pass
+def decompress_mobile_file(remote_path: str, remote_file: str, device: Device) -> str:
+    device.adb.decompress(
+        remote_path=remote_path,
+        remote_file=remote_file,
+    )
+    return remote_file
 
 
-def create(compress: str, device: Device):
-    if compress == 'zip':
-        output_filename = os.path.basename(proxy_dir) + '.zip'
-        make_gz(output_filename, proxy_dir)
-    elif compress == 'gz':
-        output_filename = os.path.basename(proxy_dir) + '.tar.gz'
-        make_gz(output_filename, proxy_dir)
-    else:
-        output_filename = None
-        log.error('Compress must be "zip" or "gz"')
-        exit(1)
-
-    filepath = os.path.join(os.path.join(proxy_dir, 'deploy'), output_filename)
-    mobile_file_path = push_to_mobile(filepath=filepath)
-    log.info(f'*{output_filename}* was pushed to mobile *{mobile_file_path}*')
+def rm_and_mk_dir(remote_path: str,  device: Device) -> str:
+    device.adb.delete_and_create_dir(
+        remote_path=remote_path
+    )
+    return remote_path
 
 
-if __name__ == '__main__':
-    create('gz')
+def create(device: Device):
+    output_filename = os.path.basename(proxy_dir) + '.tar.gz'
+    make_gz(output_filename, proxy_dir)
+
+    filepath = os.path.join(proxy_dir, output_filename)
+    mobile_file_path = push_to_mobile(
+        filepath=filepath,
+        remote_path='/data/local/tmp/',
+        device=device
+    )
+    # print(f'*{output_filename}* was pushed to mobile *{mobile_file_path}*')
+    mobile_compress_file = os.path.join(mobile_file_path, output_filename)
+    mobile_script_file = os.path.join(mobile_file_path, os.path.basename(proxy_dir))
+
+    # decompress script file
+    # rm and mk dir
+    rm_and_mk_dir(remote_path=mobile_script_file, device=device)
+
+    decompress_mobile_file(
+        remote_path=mobile_compress_file,
+        remote_file=mobile_file_path,
+        device=device
+    )
+
+
+    # create remote server
+
+
