@@ -72,6 +72,8 @@ def create(device: Device):
         device=device
     )
 
+    # clean local compress file
+    os.popen(f'rm -rf {filepath}')
 
     # create remote server
 
