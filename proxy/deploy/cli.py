@@ -3,6 +3,7 @@ import logging
 import tarfile
 import zipfile
 import argparse
+from adb import Device
 from api import configure_logging
 
 log = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ def decompress_mobile_file(filepath: str) -> str:
     pass
 
 
-def create(compress: str):
+def create(compress: str, device: Device):
     if compress == 'zip':
         output_filename = os.path.basename(proxy_dir) + '.zip'
         make_gz(output_filename, proxy_dir)

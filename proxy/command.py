@@ -7,7 +7,7 @@ from adb import Device
 
 Cmd = namedtuple('Cmd', 'name           command')
 
-ADB_PREFIX = 'adb -s {device_id} shell '
+ADB_PREFIX = 'adb -s {} '
 
 ADB = {
     'TURN_ON_AIRPLANE_MODE':   'settings put global airplane_mode_on 1',
@@ -17,8 +17,8 @@ ADB = {
     'CHECK_AIRPLANE_MODE':     'settings get global airplane_mode_on',
     'PING_BAIDU':              'ping -c 1 baidu.com',
     'FORWARD_DEVICE_PORT':     'forward tcp:{port} tcp:8118',
-    'ADB_DEVICES':             'adb devices',
-    'ADB_PUSH':                'adb push',
+    'ADB_DEVICES':             'devices',
+    'ADB_PUSH':                'push ',
 }
 
 
@@ -36,6 +36,8 @@ Commands = {
 
 
 class Command(metaclass=ABCMeta):
+    without_shell_list = ['push', ]
+
     @abstractmethod
     def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
         """generate command...
@@ -44,17 +46,28 @@ class Command(metaclass=ABCMeta):
 
 
 class AdbCommand(Command):
+
     def gen_cmd(self, name: Optional[str], device_id: Optional[str], *args) -> Optional[str]:
-        cmd = ''.join([ADB_PREFIX.format(device_id), Commands[name].command, *args])
+        """ Types:
+        # adb -s '...' push ././. ././.
+        # adb -s '...' shell ...
+        """
+        command = Commands[name].command  # gen command
+
+        if command in self.without_shell_list:
+            cmd = ''.join([ADB_PREFIX.format(device_id), ' '.join([command, *args])])
+        else:
+            cmd = ''.join([ADB_PREFIX.format(device_id), 'shell ', command, *args])
+
         return cmd
     
     
-# class OsCommand(Command):
-#     def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
-#         pass
+class OsCommand(Command):
+    def gen_cmd(self, name: Optional[str], device_id: Optional[str]) -> Optional[str]:
+        pass
 
 
-class CmdConnector():
+class CmdExecute():
     def __init__(self, command: Command, device: Device):
         self.command = command
         self.device = device
@@ -64,5 +77,13 @@ class CmdConnector():
 
     def execute(self, name: Optional[str]) -> Optional[str]:
         cmd = self.command.gen_cmd(name=name, device_id=self.device.device_id)
-        value = os.popen(cmd).read()
+        return self.execute_command(command=cmd)
+
+    @staticmethod
+    def execute_command(command: Optional[str]):
+        value = os.popen(command).read()
         return value
+
+
+if __name__ == '__main__':
+    print(AdbCommand().gen_cmd('ADB_PUSH', 'FA74W0301990', '/xx.zip', ' /data/local/tmp'))

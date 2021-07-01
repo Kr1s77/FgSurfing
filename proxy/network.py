@@ -35,12 +35,12 @@ def _make_ssl_context():
     ctx.verify_mode = ssl.CERT_NONE
 
     _cert_file = tempfile.mktemp()
-    with open(_cert_file, 'w') as fw:
-        fw.write(_DEFAULT_SSL_CERT)
+    with open(_cert_file, 'w') as f:
+        f.write(_DEFAULT_SSL_CERT)
 
     _keyfile = tempfile.mktemp()
-    with open(_keyfile, 'w') as fw:
-        fw.write(_DEFAULT_SSL_KEY)
+    with open(_keyfile, 'w') as f:
+        f.write(_DEFAULT_SSL_KEY)
 
     # load cert
     ctx.load_cert_chain(_cert_file, _keyfile)

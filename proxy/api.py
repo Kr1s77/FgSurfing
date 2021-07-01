@@ -5,9 +5,10 @@
 这样就完成了一个 Socket 代理的形式。
 """
 import logging
+from adb import Device
 from functools import partial
-# from adb import Device, AdbTools
 from deploy.cli import create
+from command import CmdExecute
 from __init__ import __author__, __version__, __site__
 
 log = logging.getLogger(__name__)
@@ -33,6 +34,24 @@ def _init_msg(debug: bool) -> None:
     return None
 
 
+def init_all_devices():
+    """
+    List of devices attached
+    1daa96050207	device
+    1daa96050207	device
+    :return: [1daa96050207, 1daa96050207]
+    """
+    devices_string = CmdExecute.execute_command('adb devices')
+    devices_with_str = devices_string.split('\n')[1:-2]
+    online_devices = list()
+    for device_str in devices_with_str:
+        if 'device' in device_str:
+            online_devices.append(device_str)
+    devices = list(map(lambda x: x.split('\t')[0].strip(), online_devices))
+    log.info(f'Get -{len(devices)}- Devices.')
+    return devices
+
+
 def runner(
         debug: bool = True,
         ip: str = '0.0.0.0',
@@ -42,14 +61,31 @@ def runner(
 ) -> None:
     """program entry
      1. deploy the application to the phone.
-     2. running application and output log.
+     2. get all device and init all device.
+     3. running application and output log.
      """
     # init
     _init_msg(debug=debug)
 
-    # deploy file
-    create(compress=compress)
+    # init all devices
+    devices_str = init_all_devices()
 
+    # not have devices exit
+    if not devices_str:
+        log.warning('No connected phones were found')
+        exit(1)
+
+    # create all device object
+    devices = list()
+    for device_id in devices_str:
+        devices.append(
+            Device(device_id=device_id, port=port, ip=ip)
+        )
+
+    # deploy file
+    for index, device in enumerate(devices):
+        log.info(f'Deploy phone name {device.device_id}  {len(devices)}/{index + 1}')
+        create(compress=compress, device=device)
 
     if open_ssl:
         log.info(f'FGProxy {__version__} running at {ip}:{port} openSSL: True')
