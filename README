@@ -36,5 +36,8 @@ Dependent modules:
         
       
         
-开启 Termux ssh：
+在 adb shell 中使用 Python
+> adb shell python /data/local/tmp/test.py
+1, 需要将 /data/data/com.termux/files/usr/bin 目录下的 python 可执行文件复制到 /system/xbin 下
+然后退出 adb shell 执行上面命令即可
     
