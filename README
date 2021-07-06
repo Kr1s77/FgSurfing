@@ -36,5 +36,5 @@ Dependent modules:
         
       
         
-将 Termux 修改为原生的 adb shell：
+开启 Termux ssh：
     
