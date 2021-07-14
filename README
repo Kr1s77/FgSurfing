@@ -36,9 +36,6 @@ Dependent modules:
         
       
         
-在 adb shell 中使用 Python
-> adb shell python /data/local/tmp/test.py
-1, pkg install python # 安装 Python 
-2, 需要将 /data/data/com.termux/files/usr/bin 目录下的 python 可执行文件复制到 /system/xbin 下
-然后退出 adb shell 执行上面命令即可
+在 adb shell 中使用 Python 文档已经同步到 blog：
+https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/
     
