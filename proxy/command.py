@@ -21,6 +21,11 @@ ADB = {
     'GZ_DECOMPRESS':           'tar -zxf',
     'RM_DIR':                  'rm -rf',
     'MK_DIR':                  'mkdir',
+    'RUN_SERVER':              'nohup python /data/local/tmp/proxy/bridge.py',
+    'CHECK_PORT':              'python /data/local/tmp/proxy/network.py',
+    'ROOT':                    'root',
+    'PROCESS_ID':              'netstat -ntlp | grep',
+    'KILL_PROCESS':            'kill -9',
 }
 
 
@@ -37,6 +42,11 @@ Commands = {
     'GZ_DECOMPRESS':          Cmd('GZ_DECOMPRESS',           ADB['GZ_DECOMPRESS']),
     'RM_DIR':                 Cmd('RM_DIR',                  ADB['RM_DIR']),
     'MK_DIR':                 Cmd('MK_DIR',                  ADB['MK_DIR']),
+    'RUN_SERVER':             Cmd('RUN_SERVER',              ADB['RUN_SERVER']),
+    'CHECK_PORT':             Cmd('CHECK_PORT',              ADB['CHECK_PORT']),
+    'ROOT':                   Cmd('ROOT',                    ADB['ROOT']),
+    'PROCESS_ID':             Cmd('PROCESS_ID',              ADB['PROCESS_ID']),
+    'KILL_PROCESS':           Cmd('KILL_PROCESS',            ADB['KILL_PROCESS']),
 }
 
 
@@ -82,7 +92,7 @@ class CmdExecute():
 
     def execute(self, name: Optional[str], *args) -> Optional[str]:
         cmd = self.command.gen_cmd(name, *args)
-        print(cmd)
+        print('[Command]:', cmd)
         return self.execute_command(command=cmd)
 
     @staticmethod
@@ -91,5 +101,3 @@ class CmdExecute():
         return value
 
 
-if __name__ == '__main__':
-    print(AdbCommand().gen_cmd('ADB_PUSH', 'FA74W0301990', '/xx.zip', ' /data/local/tmp'))
