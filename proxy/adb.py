@@ -20,15 +20,16 @@ class AdbTools(object):
         self.command = AdbCommand(device_id=device_id)
         self.cmd = CmdExecute(self.command)
 
-    # @staticmethod
-    # def turn_on_airplane_mode(device_id: str):
-    #     os.popen(f'adb -s {device_id} shell settings put global airplane_mode_on 1')
-    #     os.popen(f'adb -s {device_id} shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true')
-    #
-    # @staticmethod
-    # def close_airplane_mode(device_id: str):
-    #     os.popen(f'adb -s {device_id} shell settings put global airplane_mode_on 0')
-    #     os.popen(f'adb -s {device_id} shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false')
+    def turn_on_airplane_mode(self):
+        self.cmd.execute('TURN_ON_AIRPLANE_MODE')
+        self.cmd.execute('SET_AIRPLANE_MODE_ON')
+        time.sleep(3)
+        return None
+
+    def close_airplane_mode(self):
+        self.cmd.execute('CLOSE_AIRPLANE_MODE')
+        self.cmd.execute('SET_AIRPLANE_MODE_OFF')
+        return None
 
     def push(self, filepath: str, remote_path: str) -> str:
         return self.cmd.execute('ADB_PUSH', filepath, remote_path)
@@ -47,7 +48,9 @@ class AdbTools(object):
         return self.cmd.execute('CHECK_PORT', host, str(port))
 
     def root(self):
-        return self.cmd.execute('ROOT')
+        flag = self.cmd.execute('ROOT')
+        time.sleep(2)
+        return flag
 
     def kill_port(self, port):
         process_id = self.cmd.execute('PROCESS_ID', port, '| grep tcp | awk "{print $7}" | awk -F/ "{print $1}"')
