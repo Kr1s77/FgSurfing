@@ -40,6 +40,19 @@ class AdbTools(object):
         self.cmd.execute('RM_DIR', remote_path)
         return self.cmd.execute('MK_DIR', remote_path)
 
+    def running_server(self, host, port):
+        return self.cmd.execute('RUN_SERVER', host, str(port), '> /dev/null', '&')
+
+    def check_remote_port(self, host, port):
+        return self.cmd.execute('CHECK_PORT', host, str(port))
+
+    def root(self):
+        return self.cmd.execute('ROOT')
+
+    def kill_port(self, port):
+        process_id = self.cmd.execute('PROCESS_ID', port, '| grep tcp | awk "{print $7}" | awk -F/ "{print $1}"')
+        return self.cmd.execute('KILL_PROCESS', process_id)
+
      
 class Device(object):
     """Android Device...
