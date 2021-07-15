@@ -1,6 +1,14 @@
 # _*_ coding: utf-8 _*_
 """
 Master Process
+
+
+Why cluster running at ip6-localhost:8899?
+/bin/bash$ adb shell cat /etc/hosts
+127.0.0.1       localhost
+::1             ip6-localhost
+
+It can also run in ::1:8899.
 """
 import logging
 from adb import Device
@@ -110,20 +118,4 @@ def runner(debug: bool = True, ip: str = '0.0.0.0', port: int = 30000, open_ssl:
 
 
 if __name__ == '__main__':
-    runner(True, '0.0.0.0', 12345)
-
-    # adb = AdbTools()
-    # devices = [Device(device, adb=adb) for device in adb.get_remote_devices()]
-    # for device in devices:
-    #     network_on = device.check_4g_network()
-    #     # 开启代理模式，多进程
-    # # message >> 输出出来
-    #
-    # import time
-    # import sys
-    # count = 1
-    # while count < 99:
-    #     sys.stdout.write("current {0}%\r".format(count))
-    # sys.stdout.flush()
-    # count += 1
-    # time.sleep(0.5)
+    runner(True, 'ip6-localhost', 8899)
