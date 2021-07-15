@@ -12,6 +12,12 @@
 我使用的设备：
 Google pixel, 刷了 LineageOS android 10.
 
+# 如何启动？
+
+>> bash $ python3 api.py
+>> [2021-07-15 14:22:32,522 INFO]  ->  Count: [1] Devices Found
+>> [2021-07-15 14:22:32,522 INFO]  ->  Deploy device: FAXXXXXXX  1/1
+
 优点：
 防止爬虫 IP 反爬，相比拨号代理，具有更高的稳定性，更快网速和干净的 IP。可以实时切换 IP 非
 常的方便。
