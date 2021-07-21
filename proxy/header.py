@@ -7,7 +7,7 @@ Use this module to replace the request headers
 """
 import re
 
-
+# :Filter request headers segments
 FILTER_HEADER_SEGMENTS = (
     'connection',
     'keep-alive',
@@ -29,6 +29,10 @@ FILTER_HEADER_SEGMENTS_CAPITALIZE = tuple([_to_capitalize(i) for i in FILTER_HEA
 
 
 def filter_header(headers):
+    """
+    Remove irrelevant request headers to prevent the
+    agent from being discovered.....................
+    """
     for key, upper_key, capitalize_key in zip(
             FILTER_HEADER_SEGMENTS,
             FILTER_HEADER_SEGMENTS_UPPER,
