@@ -24,7 +24,7 @@ ADB = {
     'RUN_SERVER':              'nohup python /data/local/tmp/proxy/bridge.py',
     'CHECK_PORT':              'python /data/local/tmp/proxy/network.py',
     'ROOT':                    'root',
-    'PROCESS_ID':              'netstat -ntlp | grep',
+    'PROCESS_ID':              'ps -ef | grep',
     'KILL_PROCESS':            'kill -9',
 }
 
