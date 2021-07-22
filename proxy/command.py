@@ -11,11 +11,11 @@ ADB_PREFIX = 'adb -s {} '
 ADB = {
     'TURN_ON_AIRPLANE_MODE':   'settings put global airplane_mode_on 1',
     'SET_AIRPLANE_MODE_ON':    'am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true',
-    'CLOSE_AIRPLANE_MODE':     'settings put global airplane_mode_on 1',
+    'CLOSE_AIRPLANE_MODE':     'settings put global airplane_mode_on 0',
     'SET_AIRPLANE_MODE_OFF':   'am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false',
     'CHECK_AIRPLANE_MODE':     'settings get global airplane_mode_on',
     'PING_BAIDU':              'ping -c 1 baidu.com',
-    'FORWARD_DEVICE_PORT':     'forward tcp:{port} tcp:8118',
+    'FORWARD_DEVICE_PORT':     'forward',
     'ADB_DEVICES':             'devices',
     'ADB_PUSH':                'push',
     'GZ_DECOMPRESS':           'tar -zxf',
@@ -24,8 +24,9 @@ ADB = {
     'RUN_SERVER':              'nohup python /data/local/tmp/proxy/bridge.py',
     'CHECK_PORT':              'python /data/local/tmp/proxy/network.py',
     'ROOT':                    'root',
-    'PROCESS_ID':              'ps -ef | grep',
+    'PROCESS_ID':              'netstat -ntlp | grep',
     'KILL_PROCESS':            'kill -9',
+    'KILL_MASTER_PORT':        'kill -9 $(lsof -t -i:'
 }
 
 
@@ -47,11 +48,12 @@ Commands = {
     'ROOT':                   Cmd('ROOT',                    ADB['ROOT']),
     'PROCESS_ID':             Cmd('PROCESS_ID',              ADB['PROCESS_ID']),
     'KILL_PROCESS':           Cmd('KILL_PROCESS',            ADB['KILL_PROCESS']),
+    'KILL_MASTER_PORT':       Cmd('KILL_MASTER_PORT',        ADB['KILL_MASTER_PORT']),
 }
 
 
 class Command(metaclass=ABCMeta):
-    without_shell_list = ['push', ]
+    without_shell_list = ['push', 'forward', 'root']
 
     def __init__(self, device_id: str = None):
         self.device_id = device_id
@@ -99,5 +101,3 @@ class CmdExecute():
     def execute_command(command: Optional[str]):
         value = os.popen(command).read()
         return value
-
-
