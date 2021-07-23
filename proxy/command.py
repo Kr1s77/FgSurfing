@@ -101,3 +101,4 @@ class CmdExecute():
     def execute_command(command: Optional[str]):
         value = os.popen(command).read()
         return value
+
