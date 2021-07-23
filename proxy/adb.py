@@ -7,7 +7,6 @@ Use this module connect your mobile by android debug bridge
 """
 import os
 import time
-from network import Network
 from command import CmdExecute, AdbCommand
 
 
@@ -88,11 +87,11 @@ class Device(object):
             device_id: str,
             port: int = 8118,
             ip: str = '0.0.0.0',
-            network: Network = Network()
+            # network: Network = Network()
     ):
         self.ip = ip
         self.port = port
-        self.network = network
+        # self.network = network
         self.device_id = device_id
         self.adb = AdbTools(device_id=device_id)  # adb
 
@@ -110,4 +109,3 @@ class Device(object):
             port=self.port
         )
         return self.airplane_mode_is_open, self.transfer_port_is_open
-   
