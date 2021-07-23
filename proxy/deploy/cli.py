@@ -1,7 +1,6 @@
 import os
 import tarfile
 import zipfile
-import argparse
 from adb import Device
 
 # Default dir path
@@ -74,7 +73,3 @@ def deploy_to_remote(device: Device):
 
     # clean local compress file
     os.popen(f'rm -rf {filepath}')
-
-    # create remote server
-
-
