@@ -5,6 +5,7 @@ FGSurfing.api
 Use this module connect your mobile by android debug bridge
 :copyright: (c) 2021 by Kris
 """
+import os
 import time
 from network import Network
 from command import CmdExecute, AdbCommand
@@ -21,6 +22,9 @@ class AdbTools(object):
     def check_airplane_status(self):
         # :Check airplane mode is open
         return True if int(self.cmd.execute('CHECK_AIRPLANE_MODE')) else False
+
+    def forward_tcp_port(self, local_port, device_port):
+        return self.cmd.execute('FORWARD_DEVICE_PORT', f'tcp:{local_port} tcp:{device_port}')
 
     def turn_on_airplane_mode(self):
         self.cmd.execute('TURN_ON_AIRPLANE_MODE')
@@ -46,20 +50,33 @@ class AdbTools(object):
     def running_server(self, host, port):
         return self.cmd.execute('RUN_SERVER', host, str(port), '> /dev/null', '&')
 
+    def get_server_pid(self, port: int):
+        return self.cmd.execute('PROCESS_ID', str(port), '| grep python')
+
     def check_remote_port(self, port: int) -> bool:
-        return True if int(self.cmd.execute('CHECK_PORT', str(port))) else False
+        return True if self.get_server_pid(port) else False
 
     def start_as_root(self):
         flag = self.cmd.execute('ROOT')
         time.sleep(2)
         return flag
 
-    def kill_port(self, port):
-        return self.cmd.execute(
-            'PROCESS_ID',
-            str(port),
-            '| grep -v grep | awk "{print $2}"| sed -e "s/^/kill -9 /g" | sh'
-        )
+    def kill_port_process(self, port):
+        info = self.get_server_pid(port=port)
+        # 'ps -ef | grep {port} | grep -v grep | awk "{print $2}"| sed -e "s/^/kill -9 /g" | sh'
+
+        pid = info.split(' ')[-1].strip().split('/')[0]
+        self.cmd.execute('KILL_PROCESS', pid)
+
+    def remove_forward(self, port):
+        return self.cmd.execute('FORWARD_DEVICE_PORT', f'--remove tcp:{port}')
+
+    @staticmethod
+    def kill_master_process(port):
+        pid = os.popen(f'lsof -t -i:{port}').read()
+        command = f'kill -9 {pid}'
+        print(f'[Command]: {command}')
+        return os.popen(command).read()
 
 
 class Device(object):
@@ -79,16 +96,18 @@ class Device(object):
         self.device_id = device_id
         self.adb = AdbTools(device_id=device_id)  # adb
 
-        self.airplane_mode_is_open = False  # 飞行模式
-        self.transfer_port_is_open = False  # 手机端口
+        self.airplane_mode_is_open = False  # airplane mode status
+        self.transfer_port_is_open = False  # device port status
 
-        self.initialize_device()  # 初始化手机的信息
-
-    def initialize_device(self) -> None:
         self.adb.start_as_root()  # start device as root
+        self.initialize_device()  # init device message
 
+        self.is_change_ip = False
+
+    def initialize_device(self) -> tuple:
         self.airplane_mode_is_open = self.adb.check_airplane_status()
         self.transfer_port_is_open = self.adb.check_remote_port(
             port=self.port
         )
-        return None
+        return self.airplane_mode_is_open, self.transfer_port_is_open
+   
