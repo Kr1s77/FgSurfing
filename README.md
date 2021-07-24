@@ -11,20 +11,17 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 
 #### Create
 
->    `$ git clone https://github.com/Kr1s77/FgSurfing.git`
->
->   `$ cd FgSurfing/proxy`
->
->   `$ python3 api.py`
->
 >   ```shell
+>   $ git clone https://github.com/Kr1s77/FgSurfing.git
+>   $ cd FgSurfing/proxy
+>   $ python3 api.py
 >   >> [2021-07-15 14:22:32,522 INFO]  ->  Count: [1] Devices Found
 >   >> [2021-07-15 14:22:32,522 INFO]  ->  Deploy device: FAXXXXXXX  1/1
 >   ```
 
 #### Overall structure
 
-```
+```shell
 Clients -> Frp -> haproxy -> master -> Mobile slaver
 ```
 
