@@ -31,3 +31,5 @@ Clients -> Frp -> haproxy -> master -> Mobile slaver
 
 
 ##### Currently most of it has been completed
+> Anyone is welcome to participate and improve
+> one person can go fast, but a group of people can go further
