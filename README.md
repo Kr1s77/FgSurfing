@@ -22,7 +22,7 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 #### Overall structure
 
 ```shell
-Clients -> Frp -> haproxy -> master -> Mobile slaver
+Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
 ```
 
 
