@@ -20,9 +20,44 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 >   ```
 
 #### Overall structure
+```python3
+ import requests
+ 
+ url = 'https://httpbin.org/ip'
+ proxies = {
+     'http': 'http://{host}:{port}',
+     'https': 'https://{host}:{port}'
+ }
+ 
+ requests.get(url=url, proxies=proxies)
 
-```shell
-Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
+# The following logic is then triggered：
+# Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
+"""
+ +----------------------------+
+ | CLIENT || CLIENT || CLIENT |  
+ +-------------+--------------+
+               |
+               |
+               v
+ +-------------+--------------+
+ |          FRP SERVER        |
+ +-------------+--------------+
+               |
+               |
+               v
+ +-------------+--------------+
+ |           HAPROXY          |
+ +-------------+--------------+
+               |
+               |
+               v
++--------------+--------------+
+|                             |
+|           FGPROXY           |
+|                             |
++-----------------------------+
+"""
 ```
 
 
