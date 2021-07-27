@@ -60,7 +60,9 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 """
 ```
 
-
+##### HAPROXY STATUS 
+<p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" 
+        alt="Master"></p>
 
 ##### Currently most of it has been completed
 > Anyone is welcome to participate and improve
