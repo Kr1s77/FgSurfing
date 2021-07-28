@@ -104,7 +104,10 @@ def run_server(device, master_port):
 
     # :Running Proxy server command
     device.adb.running_server(host=device.ip, port=device.port)
-    _forward_tcp_port(device, master_port, device.port)
+    device.initialize_device()
+    
+    if device.transfer_port_is_open:
+        _forward_tcp_port(device, master_port, device.port)
 
 
 def _change_ip(master_port: int, cluster_device: Device, change_ip_queue):
