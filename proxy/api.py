@@ -35,9 +35,9 @@ def configure_logging(level):
 _set_debug_logging = partial(configure_logging, logging.DEBUG)
 _set_info_logging = partial(configure_logging, logging.INFO)
 
-IP_SWITCHING_TIME = 1 * 60   # second
-MASTER_PORT_START = 30000
-HEALTH_CHECK_TIME = 1        # second
+IP_SWITCHING_TIME = 15 * 60  # second
+MASTER_PORT_START = 30000    # start port
+HEALTH_CHECK_TIME = 1 * 60   # second
 WAIT_AIRPLANE_MODE_TIME = 8  # second
 
 
