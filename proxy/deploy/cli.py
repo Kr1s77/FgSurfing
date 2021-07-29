@@ -19,7 +19,7 @@ def make_zip(output_filename: str, source_dir):
     for parent, _, filenames in os.walk(source_dir):
         for filename in filenames:
             path_file = os.path.join(parent, filename)
-            name = path_file[pre_len:].strip(os.path.sep)  # 相对路径
+            name = path_file[pre_len:].strip(os.path.sep)  # ads path
             zip_file.write(path_file, name)
     zip_file.close()
 
