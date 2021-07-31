@@ -104,6 +104,7 @@ def run_server(device, master_port):
 
     # :Running Proxy server command
     device.adb.running_server(host=device.ip, port=device.port)
+    time.sleep(3)
     device.initialize_device()
     
     if device.transfer_port_is_open:
