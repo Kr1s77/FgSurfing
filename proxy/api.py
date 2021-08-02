@@ -135,7 +135,11 @@ def _change_ip(master_port: int, cluster_device: Device, change_ip_queue):
         host=cluster_device.ip,
         port=cluster_device.port
     )
-
+    _forward_tcp_port(
+        device=cluster_device,
+        local_port=master_port,
+        remote_port=cluster_device.port
+    )
     change_ip_queue.get_nowait()
 
     time.sleep(IP_SWITCHING_TIME)
