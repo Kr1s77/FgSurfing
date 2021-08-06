@@ -6,7 +6,11 @@ Use this module connect your mobile by android debug bridge
 :copyright: (c) 2021 by Kris
 """
 import os
+import re
 import time
+from network import Network
+# from func_timeout import exceptions
+# from func_timeout import func_set_timeout
 from command import CmdExecute, AdbCommand
 
 
@@ -47,7 +51,7 @@ class AdbTools(object):
         return self.cmd.execute('MK_DIR', remote_path)
 
     def running_server(self, host, port):
-        return self.cmd.execute('RUN_SERVER', host, str(port), '> /dev/null', '&')
+        return self.cmd.execute('RUN_SERVER', host, str(port), '> /dev/null 2>&1 &')
 
     def get_server_pid(self, port: int):
         return self.cmd.execute('PROCESS_ID', str(port), '| grep python')
@@ -60,12 +64,18 @@ class AdbTools(object):
         time.sleep(2)
         return flag
 
-    def kill_port_process(self, port):
-        info = self.get_server_pid(port=port)
-        # 'ps -ef | grep {port} | grep -v grep | awk "{print $2}"| sed -e "s/^/kill -9 /g" | sh'
+    def bridge_process(self):
+        return self.cmd.execute('GREP')
 
-        pid = info.split(' ')[-1].strip().split('/')[0]
-        self.cmd.execute('KILL_PROCESS', pid)
+    def kill_port_process(self, port):
+        # info = self.get_server_pid(port=port)
+        # # 'ps -ef | grep {port} | grep -v grep | awk "{print $2}"| sed -e "s/^/kill -9 /g" | sh'
+        #
+        # pid = info.split(' ')[-1].strip().split('/')[0]
+        pid = self.bridge_process()
+        if not pid:
+            return
+        return self.cmd.execute('KILL_PROCESS', pid)
 
     def remove_forward(self, port):
         return self.cmd.execute('FORWARD_DEVICE_PORT', f'--remove tcp:{port}')
@@ -73,9 +83,31 @@ class AdbTools(object):
     @staticmethod
     def kill_master_process(port):
         pid = os.popen(f'lsof -t -i:{port}').read()
+        if not pid:
+            return
         command = f'kill -9 {pid}'
         print(f'[Command]: {command}')
         return os.popen(command).read()
+
+    def ping_test(self):
+        ping = self.cmd.execute('PING_TEST')
+        if 'ping: unknown host baidu.com' in ping:
+            # 不通杀死端口
+            return False
+
+        match = re.search(r'time=(.*?) ms', ping)
+        if not match:
+            return False
+
+        return True
+
+    @staticmethod
+    def check_local_port(port: int):
+        """检测本地端口"""
+        result = os.popen(f'echo "" | telnet 127.0.0.1 {port}').read()
+        if "Escape character is '^]'" not in result:
+            return False
+        return True
 
 
 class Device(object):
@@ -87,11 +119,11 @@ class Device(object):
             device_id: str,
             port: int = 8118,
             ip: str = '0.0.0.0',
-            # network: Network = Network()
+            network: Network = Network()
     ):
         self.ip = ip
         self.port = port
-        # self.network = network
+        self.network = network
         self.device_id = device_id
         self.adb = AdbTools(device_id=device_id)  # adb
 
