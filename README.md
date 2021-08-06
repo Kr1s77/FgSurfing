@@ -10,11 +10,11 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 ---
 
 #### Before You Begin
-1. 手机必须使用可以执行 `adb root` 的手机，我用的是 google pixel，我的系统是 `lineageos` 第三方系统
-2. 在使用此程序之前需要确认你的手机里面已经按照下面链接配置了：https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/
+1. 手机必须使用可以执行 `adb root` 的手机，我用的是 [Google Pixel](https://en.wikipedia.org/wiki/Pixel_(1st_generation))，我的系统是 [lineageos](https://www.lineageos.org/) 第三方系统
+2. 在使用此程序之前需要确认你的手机里面已经按照下面链接配置了 [How-do-I-run-python-on-Android-devices](https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/)
 3. 然后就可以执行 Fgproxy 的程序，执行完成后，端口会被映射到 30000， 30001， 30002... 端口数量就是设备数量
-4. 之后就是配置 haproxy 做负载均衡:https://github.com/haproxy/haproxy
-5. 由于机器在我们本地，接下来需要做内网穿透将本地的 haproxy 负载均衡端口转发出去，这里我们就需要 frp：https://github.com/fatedier/frp
+4. 之后就是配置 haproxy 做负载均衡 [Haproxy](https://github.com/haproxy/haproxy)
+5. 由于机器在我们本地，接下来需要做内网穿透将本地的 haproxy 负载均衡端口转发出去，这里我们就需要 [FRP](https://github.com/fatedier/frp)
 
 =======以上就是整体的配置流程，配置完成之后 frp 出口就是我们的代理端口，就可以在爬虫中使用了。
 
