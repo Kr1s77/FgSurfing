@@ -21,6 +21,8 @@ FILTER_HEADER_SEGMENTS = (
 
 
 def _to_capitalize(word: str):
+    """ :Header segment to capitalize
+    """
     return '-'.join([i.capitalize() for i in word.split('-')])
 
 
@@ -30,8 +32,8 @@ FILTER_HEADER_SEGMENTS_CAPITALIZE = tuple([_to_capitalize(i) for i in FILTER_HEA
 
 def filter_header(headers):
     """
-    Remove irrelevant request headers to prevent the
-    agent from being discovered.....................
+    :Remove irrelevant request headers to prevent the
+    :agent from being discovered.....................
     """
     for key, upper_key, capitalize_key in zip(
             FILTER_HEADER_SEGMENTS,
