@@ -26,7 +26,9 @@ ADB = {
     'ROOT':                    'root',
     'PROCESS_ID':              'netstat -ntlp | grep',
     'KILL_PROCESS':            'kill -9',
-    'KILL_MASTER_PORT':        'kill -9 $(lsof -t -i:'
+    'KILL_MASTER_PORT':        'kill -9 $(lsof -t -i:',
+    'PING_TEST':               'ping -c 1 baidu.com',
+    'GREP':                    "ps -ef | grep bridge.py | grep -v 'grep' | awk '{print $2}'"
 }
 
 
@@ -49,6 +51,8 @@ Commands = {
     'PROCESS_ID':             Cmd('PROCESS_ID',              ADB['PROCESS_ID']),
     'KILL_PROCESS':           Cmd('KILL_PROCESS',            ADB['KILL_PROCESS']),
     'KILL_MASTER_PORT':       Cmd('KILL_MASTER_PORT',        ADB['KILL_MASTER_PORT']),
+    'PING_TEST':              Cmd('PING_TEST',               ADB['PING_TEST']),
+    'GREP':                   Cmd('GREP',                    ADB['GREP']),
 }
 
 
@@ -101,4 +105,3 @@ class CmdExecute():
     def execute_command(command: Optional[str]):
         value = os.popen(command).read()
         return value
-
