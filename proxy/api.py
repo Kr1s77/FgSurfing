@@ -8,9 +8,15 @@ Why cluster running at ip6-localhost:8899?
 127.0.0.1       localhost
 ::1             ip6-localhost
 
-It can also running at ::1:8899.
+It can also run in ::1:8899.
+下一步计划：检查 4g 网络是否可用
 
-Next step: Check if 4G is available.
+# 设备检测，如果设备不见了那么需要将设备踢出去
+# devices_str = init_all_devices()
+# log.info(f'Now running device count: {len(devices_str)}')
+# if device.device_id not in devices_str:
+#     kill_master_port(device, port=master_port)
+#     return device
 """
 import time
 import logging
@@ -28,16 +34,16 @@ log = logging.getLogger(__name__)
 def configure_logging(level):
     logging.basicConfig(
         level=level,
-        format='[Agent %(asctime)s %(levelname)s]  ->  %(message)s',
+        format='[%(asctime)s %(levelname)s]  ->  %(message)s',
     )
 
 
 _set_debug_logging = partial(configure_logging, logging.DEBUG)
 _set_info_logging = partial(configure_logging, logging.INFO)
 
-IP_SWITCHING_TIME = 15 * 60  # second
-MASTER_PORT_START = 30000    # start port
-HEALTH_CHECK_TIME = 1 * 60   # second
+IP_SWITCHING_TIME = 30 * 60   # second
+MASTER_PORT_START = 30000
+HEALTH_CHECK_TIME = 1 * 60    # second
 WAIT_AIRPLANE_MODE_TIME = 8  # second
 
 
@@ -70,6 +76,7 @@ def init_all_devices():
     :return: [1daa96050207, 1daa96050207]
     """
     devices_string = CmdExecute.execute_command('adb devices')
+    time.sleep(3)
     devices_with_str = devices_string.split('\n')[1:-2]
     online_devices = list()
     for device_str in devices_with_str:
@@ -94,7 +101,9 @@ def run_server(device, master_port):
     if int(device.adb.check_remote_port(ip, port).strip()) != 0:
     The port is already in use
     """
-    kill_master_port(device, master_port)
+    # kill_master_port(device, master_port)
+
+    device.adb.remove_forward(master_port)
     device.adb.kill_port_process(device.port)
 
     # :If airplane mode is opened, first need close airplane mode
@@ -104,11 +113,15 @@ def run_server(device, master_port):
 
     # :Running Proxy server command
     device.adb.running_server(host=device.ip, port=device.port)
-    time.sleep(3)
+    # : wait server running
+    time.sleep(2)
     device.initialize_device()
-    
-    if device.transfer_port_is_open:
-        _forward_tcp_port(device, master_port, device.port)
+    # waite init device
+    time.sleep(1)
+    if not device.transfer_port_is_open:
+        return
+
+    _forward_tcp_port(device, master_port, device.port)
 
 
 def _change_ip(master_port: int, cluster_device: Device, change_ip_queue):
@@ -119,6 +132,7 @@ def _change_ip(master_port: int, cluster_device: Device, change_ip_queue):
     # :Time to change ip
     # :Open master port for nginx
     """
+    time.sleep(IP_SWITCHING_TIME)
     change_ip_queue.put_nowait(cluster_device.device_id)
 
     cluster_device.adb.remove_forward(master_port)
@@ -135,19 +149,27 @@ def _change_ip(master_port: int, cluster_device: Device, change_ip_queue):
         host=cluster_device.ip,
         port=cluster_device.port
     )
-    _forward_tcp_port(
-        device=cluster_device,
-        local_port=master_port,
-        remote_port=cluster_device.port
-    )
-    change_ip_queue.get_nowait()
+    time.sleep(1)
+    if cluster_device.adb.bridge_process().strip():
+        _forward_tcp_port(
+            device=cluster_device,
+            local_port=master_port,
+            remote_port=cluster_device.port
+        )
+    time.sleep(1)
 
-    time.sleep(IP_SWITCHING_TIME)
+    if not cluster_device.adb.ping_test():
+        cluster_device.adb.remove_forward(port=master_port)
+
+    if not cluster_device.adb.check_local_port(master_port):
+        cluster_device.adb.remove_forward(port=master_port)
+
+    change_ip_queue.get_nowait()
 
 
 def _health_check(master_port: int, device: Device, change_ip_queue):
-    # The device will not pass health check if the IP
-    # is being switched, otherwise problems will occur
+    # 如果正在切换 IP 那么此设备不会经过健康检测，否则会出现问题
+    time.sleep(HEALTH_CHECK_TIME)
     if not change_ip_queue.empty():
         if device.device_id == change_ip_queue.get_nowait():
             change_ip_queue.put_nowait(device.device_id)
@@ -164,7 +186,9 @@ def _health_check(master_port: int, device: Device, change_ip_queue):
     if device.airplane_mode_is_open:
         device.adb.remove_forward(port=master_port)
 
-    time.sleep(HEALTH_CHECK_TIME)
+    if not device.adb.ping_test():
+        device.adb.remove_forward(port=master_port)
+
     return None
 
 
@@ -181,8 +205,7 @@ class Daemon(object):
 
     def run_forever(self):
         """Running change ip and health check"""
-        process = [Process(target=self.worker, args=(_change_ip, self.change_ip_queue)),
-                   Process(target=self.worker, args=(_health_check, self.change_ip_queue))]
+        process = [Process(target=self.worker, args=(_change_ip, self.change_ip_queue))]
 
         [p.start() for p in process]
         [p.join() for p in process]
@@ -197,8 +220,8 @@ def _deploy_all_device(devices: list) -> None:
         deploy_to_remote(device=device)
         master_port = MASTER_PORT_START + index
         run_server(device=device, master_port=master_port)
-        time.sleep(5)
-
+        time.sleep(2)
+        
     daemon = Daemon(devices=devices)
     daemon.run_forever()
 
