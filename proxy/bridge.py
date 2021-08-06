@@ -3,17 +3,19 @@
 Socket bridge // Send & Receive
 http.server: https://docs.python.org/3/library/http.server.html
 """
+import os
 import ssl
 import socket
 import select
 import sys
 import threading
+import time
 from socketserver import ThreadingMixIn
 from urllib.parse import urlsplit
 
 from header import filter_header
 import http.client as http_lib
-
+from subprocess import Popen, PIPE
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 REQUEST_TIMEOUT = 20
@@ -33,8 +35,17 @@ class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
             return HTTPServer.handle_error(self, request, client_address)
 
 
+def join_with_script_dir(path):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+
+
 class ProxyBridge(BaseHTTPRequestHandler):
-    # lock = threading.Lock()
+    lock = threading.Lock()
+    cakey = join_with_script_dir('ca.key')
+    ca_cert = join_with_script_dir('ca.crt')
+    cert_key = join_with_script_dir('cert.key')
+    cert_dir = join_with_script_dir('certs/')
+    timeout = 5
 
     def __init__(self, *args, **kwargs):
         self.tls = threading.local()
@@ -50,7 +61,38 @@ class ProxyBridge(BaseHTTPRequestHandler):
     def do_connect(self):
         """HANDLE HTTPS CONNECT REQUEST
         """
-        return self.exec_connect_options()
+        if os.path.isfile(self.cakey) and os.path.isfile(self.ca_cert) and os.path.isfile(
+                self.cert_key) and os.path.isdir(self.cert_dir):
+            self.connect_intercept()
+        else:
+            self.exec_connect_options()
+
+    def connect_intercept(self):
+        hostname = self.path.split(':')[0]
+        cert_path = "%s/%s.crt" % (self.cert_dir.rstrip('/'), hostname)
+
+        with self.lock:
+            if not os.path.isfile(cert_path):
+                epoch = "%d" % (time.time() * 1000)
+                p1 = Popen(["openssl", "req", "-new", "-key", self.cert_key, "-subj", "/CN=%s" % hostname], stdout=PIPE)
+                p2 = Popen(["openssl", "x509", "-req", "-days", "3650", "-CA", self.ca_cert, "-CAkey", self.cakey,
+                            "-set_serial", epoch, "-out", cert_path], stdin=p1.stdout, stderr=PIPE)
+                p2.communicate()
+
+        self.wfile.write(
+            "%s %d %s\r\n" % (self.protocol_version, 200, 'Connection Established')
+        )
+        self.end_headers()
+
+        self.connection = ssl.wrap_socket(self.connection, keyfile=self.cert_key, certfile=cert_path, server_side=True)
+        self.rfile = self.connection.makefile("rb", self.rbufsize)
+        self.wfile = self.connection.makefile("wb", self.wbufsize)
+
+        conn_type = self.headers.get('Proxy-Connection', '')
+        if self.protocol_version == "HTTP/1.1" and conn_type.lower() != 'close':
+            self.close_connection = False
+        else:
+            self.close_connection = True
 
     def do_get(self):
         """Handle all request protocol and all request method
@@ -89,7 +131,7 @@ class ProxyBridge(BaseHTTPRequestHandler):
             version_table = {10: 'HTTP/1.0', 11: 'HTTP/1.1'}
             setattr(res, 'response_version', version_table[res.version])
             print("Headers: ", res.headers)
-            if 'Content-Length' not in res.headers and 'no-store' in res.headers.get('Cache-Control', '')\
+            if 'Content-Length' not in res.headers and 'no-store' in res.headers.get('Cache-Control', '') \
                     and 'Content-Encoding' not in res.headers:
                 self.relay_streaming(res)
                 return
@@ -124,7 +166,7 @@ class ProxyBridge(BaseHTTPRequestHandler):
 
     def relay_streaming(self, res):
         """查看client 是否断开链接"""
-        self.wfile.write(f'{self.protocol_version} {res.status} {res.reason}\r\n' .encode(DEFAULT_CHARSET))
+        self.wfile.write(f'{self.protocol_version} {res.status} {res.reason}\r\n'.encode(DEFAULT_CHARSET))
         for line in res.headers.headers:
             self.wfile.write(line)
         self.end_headers()
