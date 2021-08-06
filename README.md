@@ -15,6 +15,7 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 3. 然后就可以执行 Fgproxy 的程序，执行完成后，端口会被映射到 30000， 30001， 30002... 端口数量就是设备数量
 4. 之后就是配置 haproxy 做负载均衡:https://github.com/haproxy/haproxy
 5. 由于机器在我们本地，接下来需要做内网穿透将本地的 haproxy 负载均衡端口转发出去，这里我们就需要 frp：https://github.com/fatedier/frp
+
 =======以上就是整体的配置流程，配置完成之后 frp 出口就是我们的代理端口，就可以在爬虫中使用了。
 
 #### Create
