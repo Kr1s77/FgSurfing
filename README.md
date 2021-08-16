@@ -10,13 +10,13 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 ---
 
 #### Before You Begin
-1. 手机必须使用可以执行 `adb root` 的手机，我用的是 [Google Pixel](https://en.wikipedia.org/wiki/Pixel_(1st_generation))，我的系统是 [lineageos](https://www.lineageos.org/) 第三方系统
-2. 在使用此程序之前需要确认你的手机里面已经按照下面链接配置了 [How-do-I-run-python-on-Android-devices](https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/)
-3. 然后就可以执行 Fgproxy 的程序，执行完成后，端口会被映射到 30000， 30001， 30002... 端口数量就是设备数量
-4. 之后就是配置 haproxy 做负载均衡 [Haproxy](https://github.com/haproxy/haproxy)
-5. 由于机器在我们本地，接下来需要做内网穿透将本地的 haproxy 负载均衡端口转发出去，这里我们就需要 [FRP](https://github.com/fatedier/frp)
+1. The mobile phone must use a mobile phone that can execute `adb root`, I use [Google Pixel](https://en.wikipedia.org/wiki/Pixel_(1st_generation))，My system is [lineageos](https://www.lineageos.org/) 
+2. Before using this program, you need to confirm that your phone has been configured according to the link below [How-do-I-run-python-on-Android-devices](https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/)
+3. Then you can execute the Fgproxy program. After the execution is completed, the port will be mapped to 30000, 30001, 30002... The number of ports is the number of devices 
+4. After that, configure haproxy for load balancing [Haproxy](https://github.com/haproxy/haproxy)
+5. Since the machine is in our local area, we need to do intranet penetration to forward the local haproxy load balancing port, here we need [FRP](https://github.com/fatedier/frp)
 
-=======以上就是整体的配置流程，配置完成之后 frp 出口就是我们的代理端口，就可以在爬虫中使用了。
+=======The above is the overall configuration process. After the configuration is completed, the frp exit is our proxy port, which can be used in the crawler. 
 
 #### Create
 
