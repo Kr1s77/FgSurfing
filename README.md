@@ -1,4 +1,4 @@
-<h2 align="center"> FGProxy </h2>
+<h3 align="center"> FGProxy </h2>
 
 <p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/log.png" 
         alt="Master"></p>
@@ -16,7 +16,7 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 4. After that, configure haproxy for load balancing [Haproxy](https://github.com/haproxy/haproxy)
 5. Since the machine is in our local area, we need to do intranet penetration to forward the local haproxy load balancing port, here we need [FRP](https://github.com/fatedier/frp)
 
-=======The above is the overall configuration process. After the configuration is completed, the frp exit is our proxy port, which can be used in the crawler. 
+The above is the overall configuration process. After the configuration is completed, the frp exit is our proxy port, which can be used in the crawler. 
 
 #### Create
 
@@ -29,49 +29,36 @@ FGProxy  is an enterprise-level 4g agent program with automatic deployment. It i
 >   ```
 
 #### Overall structure
-```python3
- import requests
- 
- url = 'https://httpbin.org/ip'
- proxies = {
-     'http': 'http://{host}:{port}',
-     'https': 'https://{host}:{port}'
- }
- 
- requests.get(url=url, proxies=proxies)
 
-# The following logic is then triggered：
-# Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
-"""
- +----------------------------+
- | CLIENT || CLIENT || CLIENT |  
- +-------------+--------------+
-               |
-               |
-               v
- +-------------+--------------+
- |          FRP SERVER        |
- +-------------+--------------+
-               |
-               |
-               v
- +-------------+--------------+
- |           HAPROXY          |
- +-------------+--------------+
-               |
-               |
-               v
-+--------------+--------------+
-|                             |
-|           FGPROXY           |
-|                             |
-+-----------------------------+
-"""
-```
+The following logic is then triggered：
+Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
+
+>         +----------------------------+
+>         | CLIENT || CLIENT || CLIENT |  
+>         +-------------+--------------+
+>                       |
+>                       |
+>                       v
+>         +-------------+--------------+
+>         |          FRP SERVER        |
+>         +-------------+--------------+
+>                       |
+>                       |
+>                       v
+>         +-------------+--------------+
+>         |           HAPROXY          |
+>         +-------------+--------------+
+>                       |
+>                       |
+>                       v
+>        +--------------+--------------+
+>        |                             |
+>        |           FGPROXY           |
+>        |                             |
+>        +-----------------------------+
 
 ##### HAPROXY STATUS 
-<p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" 
-        alt="Master"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" alt="Master"></p>
 
 ##### Currently most of it has been completed
 > Anyone is welcome to participate and improve
