@@ -65,3 +65,6 @@ Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
 ##### Currently most of it has been completed
 > Anyone is welcome to participate and improve
 > one person can go fast, but a group of people can go further
+
+
+##### 有兴趣的同学可以尝试使用 haproxy + prometheus + grafana 做个代理的监控，还是非常不错的！
