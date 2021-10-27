@@ -8,7 +8,7 @@
 ##### 有兴趣的同学可以尝试使用 haproxy + prometheus + grafana 做个代理的监控，还是非常不错的！
 #### Email: criselyj@163.com
 
-FGProxy  is an enterprise-level 4g agent program with automatic deployment. It is a more stable agent program than the 4g agent implemented by the Raspberry Pi. It discards the drawbacks of the Internet of Things card and uses a real 4g mobile phone card to build.
+FGProxy 是一个企业级 `4G` 代理程序。它是一个比树莓派实现的4g代理程序更稳定的代理程序。它摒弃了物联网卡的缺点，使用了真正的4g手机卡来实现，部署实现都非常的简单。
 
 ---
 
