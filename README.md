@@ -8,7 +8,6 @@
 
 #### 文档可能比较简洁，部署失败的可以邮件联系我，或者找我远程协助搭建，有啥问题也可以在 issues 里面提出。
 ##### 有兴趣的同学可以尝试使用 haproxy + prometheus + grafana 做个代理的监控，还是非常不错的！
-#### Email: criselyj@163.com
 
 
 #### Overall structure
