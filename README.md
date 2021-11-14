@@ -13,11 +13,12 @@
 ---
 
 #### Before You Begin
-1. The mobile phone must use a mobile phone that can execute `adb root`, I use [Google Pixel](https://en.wikipedia.org/wiki/Pixel_(1st_generation))，My system is [lineageos](https://www.lineageos.org/) 
-2. Before using this program, you need to confirm that your phone has been configured according to the link below [How-do-I-run-python-on-Android-devices](https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/)
-3. Then you can execute the Fgproxy program. After the execution is completed, the port will be mapped to 30000, 30001, 30002... The number of ports is the number of devices 
-4. After that, configure haproxy for load balancing [Haproxy](https://github.com/haproxy/haproxy)
-5. Since the machine is in our local area, we need to do intranet penetration to forward the local haproxy load balancing port, here we need [FRP](https://github.com/fatedier/frp)
+1. [Install lineageos](https://wiki.lineageos.org/devices/sailfish/install) at `Google Pixel`
+2. The mobile phone must use a mobile phone that can execute `adb root`, I use [Google Pixel](https://en.wikipedia.org/wiki/Pixel_(1st_generation))，My system is [lineageos](https://www.lineageos.org/) 
+3. Before using this program, you need to confirm that your phone has been configured according to the link below [How-do-I-run-python-on-Android-devices](https://kr1s77.github.io/2021/7/12/How-do-I-run-python-on-Android-devices/)
+4. Then you can execute the Fgproxy program. After the execution is completed, the port will be mapped to 30000, 30001, 30002... The number of ports is the number of devices 
+5. After that, configure haproxy for load balancing [Haproxy](https://github.com/haproxy/haproxy)
+6. Since the machine is in our local area, we need to do intranet penetration to forward the local haproxy load balancing port, here we need [FRP](https://github.com/fatedier/frp)
 
 The above is the overall configuration process. After the configuration is completed, the frp exit is our proxy port, which can be used in the crawler. 
 
