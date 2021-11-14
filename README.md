@@ -10,6 +10,16 @@
 ##### 有兴趣的同学可以尝试使用 haproxy + prometheus + grafana 做个代理的监控，还是非常不错的！
 #### Email: criselyj@163.com
 
+
+#### Overall structure
+
+The following logic is then triggered：
+<p align="center"><img src="https://github.com/Kr1s77/FgSurfing/blob/main/Fgproxy.png?raw=true" alt="Master"></p>
+
+
+##### HAPROXY STATUS 
+<p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" alt="Master"></p>
+
 ---
 
 #### Before You Begin
@@ -31,14 +41,6 @@ The above is the overall configuration process. After the configuration is compl
 >   >> [2021-07-15 14:22:32,522 INFO]  ->  Count: [1] Devices Found
 >   >> [2021-07-15 14:22:32,522 INFO]  ->  Deploy device: FAXXXXXXX  1/1
 >   ```
-
-#### Overall structure
-
-The following logic is then triggered：
-<p align="center"><img src="https://github.com/Kr1s77/FgSurfing/blob/main/Fgproxy.png?raw=true" alt="Master"></p>
-
-##### HAPROXY STATUS 
-<p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" alt="Master"></p>
 
 ##### Currently most of it has been completed
 > Anyone is welcome to participate and improve
