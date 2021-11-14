@@ -35,31 +35,7 @@ The above is the overall configuration process. After the configuration is compl
 #### Overall structure
 
 The following logic is then triggered：
-Clients -> Frp -> Haproxy -> Master PC -> Mobile Slaver
-
->         +----------------------------+
->         | CLIENT || CLIENT || CLIENT |  
->         +-------------+--------------+
->                       |
->                       |
->                       v
->         +-------------+--------------+
->         |          FRP SERVER        |
->         +-------------+--------------+
->                       |
->                       |
->                       v
->         +-------------+--------------+
->         |           HAPROXY          |
->         +-------------+--------------+
->                       |
->                       |
->                       v
->        +--------------+--------------+
->        |                             |
->        |           FGPROXY           |
->        |                             |
->        +-----------------------------+
+<p align="center"><img src="https://github.com/Kr1s77/FgSurfing/blob/main/Fgproxy.png?raw=true" alt="Master"></p>
 
 ##### HAPROXY STATUS 
 <p align="center"><img src="https://raw.githubusercontent.com/Kr1s77/FgSurfing/main/haproxy.png" alt="Master"></p>
