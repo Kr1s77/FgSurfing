@@ -51,7 +51,7 @@ class AdbTools(object):
         return self.cmd.execute('MK_DIR', remote_path)
 
     def running_server(self, host, port):
-        return self.cmd.execute('RUN_SERVER', host, str(port), '> /dev/null 2>&1 &')
+        return self.cmd.execute('RUN_SERVER', host, str(port), '&>/dev/null', '&')
 
     def get_server_pid(self, port: int):
         return self.cmd.execute('PROCESS_ID', str(port), '| grep python')
