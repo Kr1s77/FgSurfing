@@ -21,7 +21,7 @@ ADB = {
     'GZ_DECOMPRESS':           'tar -zxf',
     'RM_DIR':                  'rm -rf',
     'MK_DIR':                  'mkdir',
-    'RUN_SERVER':              'nohup python /data/local/tmp/proxy/bridge.py',
+    'RUN_SERVER':              'python /data/local/tmp/proxy/bridge.py',
     'CHECK_PORT':              'python /data/local/tmp/proxy/network.py',
     'ROOT':                    'root',
     'PROCESS_ID':              'netstat -ntlp | grep',
