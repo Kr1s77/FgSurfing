@@ -9,6 +9,7 @@
 #### 文档可能比较简洁，部署失败的可以邮件联系我，或者找我远程协助搭建，有啥问题也可以在 issues 里面提出。
 ##### 有兴趣的同学可以尝试使用 haproxy + prometheus + grafana 做个代理的监控，还是非常不错的！
 
+#### ✅[bridge.py](https://github.com/Kr1s77/FgSurfing/blob/main/proxy/bridge.py) 可以单独运行在任何服务器上，那么运行 `bridge.py` 的服务器也可以作为代理使用，如果你想测试，可以通过这个方式
 
 #### Overall structure
 
